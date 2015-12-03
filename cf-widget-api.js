@@ -144,9 +144,9 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 	
-	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	var Channel = (function () {
 	  function Channel(sourceId) {
@@ -257,7 +257,7 @@
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/*
-	 Yaku v0.11.4
+	 Yaku v0.11.5
 	 (c) 2015 Yad Smood. http://ysmood.org
 	 License MIT
 	*/
@@ -347,6 +347,8 @@
 	                settlePromise(self, $rejected, err.e);
 	        }
 	    };
+	
+	    Yaku.default = Yaku;
 	
 	    extendPrototype(Yaku, {
 	        /**
@@ -1085,11 +1087,11 @@
 	  function FieldLocale(channel, _ref) {
 	    var _this = this;
 	
-	    _classCallCheck(this, FieldLocale);
-	
 	    var id = _ref.id;
 	    var locale = _ref.locale;
 	    var value = _ref.value;
+	
+	    _classCallCheck(this, FieldLocale);
 	
 	    this.id = id;
 	    this.locale = locale;
