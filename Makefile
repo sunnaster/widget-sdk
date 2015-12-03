@@ -1,5 +1,4 @@
 build-pages:
 	git checkout gh-pages
+	git pull
 	cp -r ../dist/* .
-	git commit --all --message 'build dist'
-	# git push
