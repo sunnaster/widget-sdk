@@ -1198,6 +1198,7 @@
 	  return { startAutoResizer: startAutoResizer, stopAutoResizer: stopAutoResizer, updateHeight: updateHeight };
 	
 	  function startAutoResizer() {
+	    updateHeight();
 	    observer.observe(window.document.body, {
 	      attributes: true, childList: true,
 	      subtree: true, characterData: true

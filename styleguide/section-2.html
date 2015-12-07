@@ -55,18 +55,12 @@
                 ><span class="kss-nav__name">Block button</span>
               </a>
             </li>
-            <li class="kss-nav__menu-item">
-              <a href="section-.html#kssref-2-3">
-                <span class="kss-nav__ref">2.3</span
-                ><span class="kss-nav__name">Link Style Button</span>
-              </a>
-            </li>
         </ul>
       </li>
       <li class="kss-nav__menu-item">
         <a href="section-3.html">
           <span class="kss-nav__ref">3</span
-          ><span class="kss-nav__name">CFNext Forms</span>
+          ><span class="kss-nav__name">Forms</span>
         </a>
       </li>
     </ul>
@@ -112,11 +106,8 @@
 
       <div class="kss-description">
         <p>The following button styles should be used depending on the type of action that is performed.
-Action - This button should be used for actions which are important, but not necessarily
-the most important action in the current view
-Primary action - Used for the most important action in a given context
-Secondary action -  Used for actions that should complement primary actions or visually less
-important actions</p>
+Primary action     - Used for the most important action in a given context
+Secondary action   - Used for the secondary action in a given context</p>
 
       </div>
     </div>
@@ -130,70 +121,37 @@ important actions</p>
         </div>
         <div class="kss-modifier__example">
           <button class="[modifier class]">Action</button>
-<button class="[modifier class] is-loading">Loading</button>
-<button class="[modifier class]" disabled="disabled">Disabled</button>
+<button class="[modifier class] cf-is-loading">Loading</button>
+<button class="[modifier class]" disabled>Disabled</button>
         </div>
         <div class="kss-modifier__name kss-style">
-          .cfnext-btn-action
-        </div>
-        <div class="kss-modifier__description kss-style">
-          Action
-        </div>
-        <div class="kss-modifier__example">
-          <button class="cfnext-btn-action">Action</button>
-<button class="cfnext-btn-action is-loading">Loading</button>
-<button class="cfnext-btn-action" disabled="disabled">Disabled</button>
-        </div>
-        <div class="kss-modifier__name kss-style">
-          .cfnext-btn-primary-action
+          .cf-btn-primary
         </div>
         <div class="kss-modifier__description kss-style">
           Primary action
         </div>
         <div class="kss-modifier__example">
-          <button class="cfnext-btn-primary-action">Action</button>
-<button class="cfnext-btn-primary-action is-loading">Loading</button>
-<button class="cfnext-btn-primary-action" disabled="disabled">Disabled</button>
+          <button class="cf-btn-primary">Action</button>
+<button class="cf-btn-primary cf-is-loading">Loading</button>
+<button class="cf-btn-primary" disabled>Disabled</button>
         </div>
         <div class="kss-modifier__name kss-style">
-          .cfnext-btn-secondary-action
+          .cf-btn-secondary
         </div>
         <div class="kss-modifier__description kss-style">
           Secondary action
         </div>
         <div class="kss-modifier__example">
-          <button class="cfnext-btn-secondary-action">Action</button>
-<button class="cfnext-btn-secondary-action is-loading">Loading</button>
-<button class="cfnext-btn-secondary-action" disabled="disabled">Disabled</button>
-        </div>
-        <div class="kss-modifier__name kss-style">
-          .cfnext-btn-caution
-        </div>
-        <div class="kss-modifier__description kss-style">
-          Caution
-        </div>
-        <div class="kss-modifier__example">
-          <button class="cfnext-btn-caution">Action</button>
-<button class="cfnext-btn-caution is-loading">Loading</button>
-<button class="cfnext-btn-caution" disabled="disabled">Disabled</button>
-        </div>
-        <div class="kss-modifier__name kss-style">
-          .cfnext-btn-plain
-        </div>
-        <div class="kss-modifier__description kss-style">
-          Plain button
-        </div>
-        <div class="kss-modifier__example">
-          <button class="cfnext-btn-plain">Action</button>
-<button class="cfnext-btn-plain is-loading">Loading</button>
-<button class="cfnext-btn-plain" disabled="disabled">Disabled</button>
+          <button class="cf-btn-secondary">Action</button>
+<button class="cf-btn-secondary cf-is-loading">Loading</button>
+<button class="cf-btn-secondary" disabled>Disabled</button>
         </div>
       </div>
 
       <div class="kss-markup kss-style">
         <pre class="prettyprint linenums lang-html"><code data-language="html">&lt;button class&#x3D;&quot;[modifier class]&quot;&gt;Action&lt;/button&gt;
-&lt;button class&#x3D;&quot;[modifier class] is-loading&quot;&gt;Loading&lt;/button&gt;
-&lt;button class&#x3D;&quot;[modifier class]&quot; disabled&#x3D;&quot;disabled&quot;&gt;Disabled&lt;/button&gt;</code></pre>
+&lt;button class&#x3D;&quot;[modifier class] cf-is-loading&quot;&gt;Loading&lt;/button&gt;
+&lt;button class&#x3D;&quot;[modifier class]&quot; disabled&gt;Disabled&lt;/button&gt;</code></pre>
       </div>
 
       </section>
@@ -214,7 +172,7 @@ important actions</p>
 
 
       <div class="kss-description">
-        <p>Use <code>x--block</code> to make the button a block element</p>
+        <p>Use <code>.cf-block</code> together with a button to make it a block element</p>
 
       </div>
     </div>
@@ -225,55 +183,21 @@ important actions</p>
         </div>
         <div class="kss-modifier__example">
           <p>
-  <button class="cfnext-btn-action x--block">Block Action Button</button>
+  <button class="cf-btn-primary cf-block">Block Action Button</button>
 </p>
 <p>
-  <button class="cfnext-btn-action x--block is-loading">Loading</button>
+  <button class="cf-btn-secondary cf-block cf-is-loading">Loading</button>
 </p>
         </div>
       </div>
 
       <div class="kss-markup kss-style">
         <pre class="prettyprint linenums lang-html"><code data-language="html">&lt;p&gt;
-  &lt;button class&#x3D;&quot;cfnext-btn-action x--block&quot;&gt;Block Action Button&lt;/button&gt;
+  &lt;button class&#x3D;&quot;cf-btn-primary cf-block&quot;&gt;Block Action Button&lt;/button&gt;
 &lt;/p&gt;
 &lt;p&gt;
-  &lt;button class&#x3D;&quot;cfnext-btn-action x--block is-loading&quot;&gt;Loading&lt;/button&gt;
+  &lt;button class&#x3D;&quot;cf-btn-secondary cf-block cf-is-loading&quot;&gt;Loading&lt;/button&gt;
 &lt;/p&gt;</code></pre>
-      </div>
-
-      </section>
-      <section id="kssref-2-3" class="kss-section kss-section--depth-2">
-
-    <div class="kss-style">
-      <h2 class="kss-title kss-title--level-2">
-        <a class="kss-title__permalink" href="#kssref-2-3">
-          <span class="kss-title__ref">
-              2.3
-            <span class="kss-title__permalink-hash">
-                #permalink
-            </span>
-          </span>
-          Link Style Button
-        </a>
-      </h2>
-
-
-    </div>
-
-      <div class="kss-modifier__wrapper">
-        <div class="kss-modifier__heading kss-style">
-          Example
-        </div>
-        <div class="kss-modifier__example">
-          <button class="cfnext-btn-link">Action</button>
-<button class="cfnext-btn-link" disabled>Action</button>
-        </div>
-      </div>
-
-      <div class="kss-markup kss-style">
-        <pre class="prettyprint linenums lang-html"><code data-language="html">&lt;button class&#x3D;&quot;cfnext-btn-link&quot;&gt;Action&lt;/button&gt;
-&lt;button class&#x3D;&quot;cfnext-btn-link&quot; disabled&gt;Action&lt;/button&gt;</code></pre>
       </div>
 
       </section>
