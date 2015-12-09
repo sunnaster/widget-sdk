@@ -430,18 +430,17 @@ textarea.cf-form-input,
   display: inline-block;
   cursor: pointer;
 }
-.cfnext-form-option > input[type="checkbox"]:disabled + .cfnext-form-option__desc,
-.cfnext-form-option > input[type="checkbox"]:disabled + label {
+.cf-form-option > input[type="checkbox"]:disabled + label {
   color: #808080;
 }
 .cf-form-horizontal {
   display: flex;
   flex-wrap: wrap;
 }
-.cf-form-horizontal .cfnext-form-option {
+.cf-form-horizontal .cf-form-option {
   margin-right: 2.571428571428572em;
 }
-.cf-form-horizontal .cfnext-form-option:last-child {
+.cf-form-horizontal .cf-form-option:last-child {
   margin-right: 0;
 }
 /*# sourceMappingURL=cf-widget-api.css.map */

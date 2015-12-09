@@ -148,11 +148,11 @@
 	
 	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
 	
-	var Channeld = (function () {
-	  function Channeld(sourceId) {
+	var Channel = (function () {
+	  function Channel(sourceId) {
 	    var _this = this;
 	
-	    _classCallCheck(this, Channeld);
+	    _classCallCheck(this, Channel);
 	
 	    this.sourceId = sourceId;
 	    this.messageID = 0;
@@ -164,7 +164,7 @@
 	    });
 	  }
 	
-	  _createClass(Channeld, [{
+	  _createClass(Channel, [{
 	    key: 'call',
 	    value: function call(method) {
 	      var _this2 = this;
@@ -247,10 +247,10 @@
 	    }
 	  }]);
 	
-	  return Channeld;
+	  return Channel;
 	})();
 	
-	exports.default = Channeld;
+	exports.default = Channel;
 
 /***/ },
 /* 2 */
@@ -1114,6 +1114,7 @@
 	  }, {
 	    key: 'setValue',
 	    value: function setValue(value) {
+	      this._value = value;
 	      return this._channel.call('setValue', this.id, this.locale, value);
 	    }
 	  }, {
@@ -1207,9 +1208,7 @@
 	
 	  function updateHeight(height) {
 	    if (height == null) {
-	      // let scrollHeight = window.document.body.scrollHeight
-	      var offsetHeight = window.document.body.offsetHeight;
-	      height = offsetHeight;
+	      height = window.document.body.scrollHeight;
 	    }
 	
 	    if (height !== oldHeight) {
@@ -1292,21 +1291,20 @@
 	    _classCallCheck(this, Field);
 	
 	    this.id = info.id;
-	    this._locales = info.locales;
+	    this.locales = info.locales;
 	    this._defaultLocale = defaultLocale;
 	    this._valueSignals = {};
 	    this._values = info.values;
 	    this._channel = channel;
 	
-	    this._locales.forEach(function (locale) {
+	    this.locales.forEach(function (locale) {
 	      _this._valueSignals[locale] = new _signal2.default();
 	    });
 	
 	    channel.addHandler('valueChanged', function (id, locale, value) {
 	      if (id === _this.id) {
-	        // console.log(id, locale)
 	        _this._values[locale] = value;
-	        if (locale in _this._valueSignals) _this._valueSignals[locale].dispatch(value);
+	        _this._valueSignals[locale].dispatch(value);
 	      }
 	    });
 	  }
@@ -1335,6 +1333,9 @@
 	      if (!handler) {
 	        handler = locale;
 	        locale = this._defaultLocale;
+	      }
+	      if (!(locale in this._valueSignals)) {
+	        throw new Error('Unknown locale "' + locale + '" for field "' + this.id + '"');
 	      }
 	      return this._valueSignals[locale].attach(handler);
 	    }

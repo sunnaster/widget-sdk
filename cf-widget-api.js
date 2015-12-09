@@ -54,7 +54,7 @@
 	
 	var _channel2 = _interopRequireDefault(_channel);
 	
-	var _fieldLocale = __webpack_require__(3);
+	var _fieldLocale = __webpack_require__(4);
 	
 	var _fieldLocale2 = _interopRequireDefault(_fieldLocale);
 	
@@ -142,6 +142,10 @@
 	
 	var _yaku2 = _interopRequireDefault(_yaku);
 	
+	var _signal = __webpack_require__(3);
+	
+	var _signal2 = _interopRequireDefault(_signal);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -191,26 +195,22 @@
 	    key: 'addHandler',
 	    value: function addHandler(method, handler) {
 	      if (!(method in this.messageHandlers)) {
-	        this.messageHandlers[method] = [];
+	        this.messageHandlers[method] = new _signal2.default();
 	      }
-	      this.messageHandlers[method].push(handler);
+	      return this.messageHandlers[method].attach(handler);
 	    }
 	  }, {
 	    key: '_handleMessage',
 	    value: function _handleMessage(message) {
-	      var _this3 = this;
-	
 	      if (message.method) {
-	        (function () {
-	          // console.log('received message', message)
-	          var method = message.method;
-	          var params = message.params;
+	        // console.log('received message', message)
+	        var method = message.method;
+	        var params = message.params;
 	
-	          var handlers = _this3.messageHandlers[method] || [];
-	          handlers.forEach(function (handler) {
-	            handler.apply(undefined, _toConsumableArray(params));
-	          });
-	        })();
+	        var handlers = this.messageHandlers[method];
+	        if (handlers) {
+	          handlers.dispatch.apply(handlers, _toConsumableArray(params));
+	        }
 	      } else {
 	        var id = message.id;
 	        var result = message.result;
@@ -1063,6 +1063,54 @@
 
 /***/ },
 /* 3 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var Signal = (function () {
+	  function Signal() {
+	    _classCallCheck(this, Signal);
+	
+	    this._id = 0;
+	    this._listeners = {};
+	  }
+	
+	  _createClass(Signal, [{
+	    key: "dispatch",
+	    value: function dispatch() {
+	      for (var key in this._listeners) {
+	        var _listeners;
+	
+	        (_listeners = this._listeners)[key].apply(_listeners, arguments);
+	      }
+	    }
+	  }, {
+	    key: "attach",
+	    value: function attach(listener) {
+	      var id = this._id++;
+	      this._listeners[id] = listener;
+	      var self = this;
+	      return function removeListener() {
+	        delete self._listeners[id];
+	      };
+	    }
+	  }]);
+	
+	  return Signal;
+	})();
+	
+	exports.default = Signal;
+
+/***/ },
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1073,7 +1121,7 @@
 	  value: true
 	});
 	
-	var _signal = __webpack_require__(4);
+	var _signal = __webpack_require__(3);
 	
 	var _signal2 = _interopRequireDefault(_signal);
 	
@@ -1130,54 +1178,6 @@
 	exports.default = FieldLocale;
 
 /***/ },
-/* 4 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var Signal = (function () {
-	  function Signal() {
-	    _classCallCheck(this, Signal);
-	
-	    this._id = 0;
-	    this._listeners = {};
-	  }
-	
-	  _createClass(Signal, [{
-	    key: "dispatch",
-	    value: function dispatch() {
-	      for (var key in this._listeners) {
-	        var _listeners;
-	
-	        (_listeners = this._listeners)[key].apply(_listeners, arguments);
-	      }
-	    }
-	  }, {
-	    key: "attach",
-	    value: function attach(listener) {
-	      var id = this._id++;
-	      this._listeners[id] = listener;
-	      var self = this;
-	      return function removeListener() {
-	        delete self._listeners[id];
-	      };
-	    }
-	  }]);
-	
-	  return Signal;
-	})();
-	
-	exports.default = Signal;
-
-/***/ },
 /* 5 */
 /***/ function(module, exports) {
 
@@ -1229,7 +1229,7 @@
 	});
 	exports.default = createEntry;
 	
-	var _signal = __webpack_require__(4);
+	var _signal = __webpack_require__(3);
 	
 	var _signal2 = _interopRequireDefault(_signal);
 	
@@ -1277,7 +1277,7 @@
 	  value: true
 	});
 	
-	var _signal = __webpack_require__(4);
+	var _signal = __webpack_require__(3);
 	
 	var _signal2 = _interopRequireDefault(_signal);
 	
