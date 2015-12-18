@@ -1188,32 +1188,45 @@
 	});
 	exports.default = createWindow;
 	function createWindow(channel) {
-	  var observer = new MutationObserver(function () {
+	  var autoUpdateHeight = function autoUpdateHeight() {
 	    return updateHeight();
-	  });
+	  };
+	  var observer = new MutationObserver(autoUpdateHeight);
 	  var oldHeight = null;
+	  var isAutoResizing = false;
 	
 	  return { startAutoResizer: startAutoResizer, stopAutoResizer: stopAutoResizer, updateHeight: updateHeight };
 	
 	  function startAutoResizer() {
 	    updateHeight();
+	    if (isAutoResizing) {
+	      return;
+	    }
+	    isAutoResizing = true;
 	    observer.observe(window.document.body, {
 	      attributes: true, childList: true,
 	      subtree: true, characterData: true
 	    });
+	    window.addEventListener('resize', autoUpdateHeight);
 	  }
 	
 	  function stopAutoResizer() {
+	    if (!isAutoResizing) {
+	      return;
+	    }
+	    isAutoResizing = false;
 	    observer.disconnect();
+	    window.removeEventListener('resize', autoUpdateHeight);
 	  }
 	
 	  function updateHeight(height) {
 	    if (height == null) {
-	      height = window.document.body.scrollHeight;
+	      height = Math.ceil(document.documentElement.getBoundingClientRect().height);
 	    }
 	
 	    if (height !== oldHeight) {
 	      channel.send('setHeight', height);
+	      oldHeight = height;
 	    }
 	  }
 	}
