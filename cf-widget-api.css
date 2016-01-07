@@ -22,7 +22,7 @@ fieldset {
 }
 @font-face {
   font-family: "Avenir Next W01";
-  src: url("http://static.contentful.com/app/627fbb5a-3bae-4cd9-b617-2f923e29d55e.woff2") format("woff2"), url("http://static.contentful.com/app/f26faddb-86cc-4477-a253-1e1287684336.woff") format("woff");
+  src: url("https://static.contentful.com/app/627fbb5a-3bae-4cd9-b617-2f923e29d55e.woff2") format("woff2"), url("https://static.contentful.com/app/f26faddb-86cc-4477-a253-1e1287684336.woff") format("woff");
   font-weight: 600;
   font-style: normal;
 }
@@ -375,7 +375,7 @@ a.cf-btn-secondary:visited {
   transition: none;
 }
 .cf-form-input[aria-invalid="true"],
-.cf-form-input.has-error {
+.cf-form-input.cf-has-error {
   border-color: #df3537;
 }
 .cf-form-input[type="number"] {
@@ -393,6 +393,34 @@ textarea.cf-form-input,
 .cf-form-input[type="text"],
 .cf-form-input[type="password"] {
   width: 100%;
+}
+select.cf-form-input {
+  background: none;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("https://static.contentful.com/app/svg/dd-arrow-down.svg"), none;
+  background-position: center right 0.8em;
+  background-repeat: no-repeat, repeat;
+  background-size: 0.7em, 100%;
+  padding-left: 1ex;
+  padding-right: 8ex;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+select.cf-form-input::-ms-expand {
+  display: none;
+}
+select.cf-form-input:hover:not(:disabled) {
+  background-image: url("https://static.contentful.com/app/svg/dd-arrow-down.svg"), linear-gradient(to bottom, #fff, #f9f9f9);
+}
+select.cf-form-input:focus {
+  border: 1px solid #9b9b9b;
+}
+select.cf-form-input:disabled {
+  background-image: url("https://static.contentful.com/app/svg/dd-arrow-down-disabled.svg");
+  cursor: not-allowed;
 }
 .cf-form-hint {
   margin-top: 0.642857142857143em;

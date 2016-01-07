@@ -50,34 +50,66 @@
 	  value: true
 	});
 	
-	var _channel = __webpack_require__(1);
+	var _setup = __webpack_require__(1);
+	
+	var _setup2 = _interopRequireDefault(_setup);
+	
+	var _channel = __webpack_require__(2);
 	
 	var _channel2 = _interopRequireDefault(_channel);
 	
-	var _fieldLocale = __webpack_require__(4);
+	var _fieldLocale = __webpack_require__(5);
 	
 	var _fieldLocale2 = _interopRequireDefault(_fieldLocale);
 	
-	var _window = __webpack_require__(5);
+	var _window = __webpack_require__(6);
 	
 	var _window2 = _interopRequireDefault(_window);
 	
-	var _entry = __webpack_require__(6);
+	var _entry = __webpack_require__(7);
 	
 	var _entry2 = _interopRequireDefault(_entry);
 	
-	var _space = __webpack_require__(8);
+	var _space = __webpack_require__(9);
 	
 	var _space2 = _interopRequireDefault(_space);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	window.contentfulWidget = setup();
+	window.contentfulWidget = (0, _setup2.default)(createWidgetAPI);
 	exports.default = window.contentfulWidget;
 	
-	function setup() {
+	function createWidgetAPI(_ref) {
+	  var id = _ref.id;
+	  var entry = _ref.entry;
+	  var locales = _ref.locales;
+	  var field = _ref.field;
+	  var fieldInfo = _ref.fieldInfo;
+	
+	  var channel = new _channel2.default(id, window.parent);
+	
+	  return {
+	    locales: locales,
+	    field: new _fieldLocale2.default(channel, field),
+	    entry: (0, _entry2.default)(channel, entry, fieldInfo, locales.default),
+	    space: (0, _space2.default)(channel),
+	    window: (0, _window2.default)(channel)
+	  };
+	}
+
+/***/ },
+/* 1 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.default = setup;
+	function setup(apiCreator) {
 	  var readyCallbacks = [];
-	  var widget = null;
+	  var widgetApi = null;
 	
 	  window.addEventListener('message', initializer);
 	
@@ -91,77 +123,60 @@
 	      return;
 	    }
 	
-	    widget = createWidgetAPI(params);
+	    widgetApi = apiCreator(params);
 	    window.removeEventListener('message', initializer);
 	
 	    readyCallbacks.forEach(function (cb) {
-	      return cb(widget);
+	      return cb(widgetApi);
 	    });
 	  }
 	
 	  function init(cb) {
-	    if (widget) {
-	      cb(widget);
+	    if (widgetApi) {
+	      cb(widgetApi);
 	    } else {
 	      readyCallbacks.push(cb);
 	    }
 	  }
 	}
-	
-	function createWidgetAPI(_ref) {
-	  var id = _ref.id;
-	  var entry = _ref.entry;
-	  var locales = _ref.locales;
-	  var field = _ref.field;
-	  var fieldInfo = _ref.fieldInfo;
-	
-	  var channel = new _channel2.default(id);
-	
-	  return {
-	    locales: locales,
-	    field: new _fieldLocale2.default(channel, field),
-	    entry: (0, _entry2.default)(channel, entry, fieldInfo, locales.default),
-	    space: (0, _space2.default)(channel),
-	    window: (0, _window2.default)(channel)
-	  };
-	}
 
 /***/ },
-/* 1 */
+/* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
 	
-	var _yaku = __webpack_require__(2);
+	var _yaku = __webpack_require__(3);
 	
 	var _yaku2 = _interopRequireDefault(_yaku);
 	
-	var _signal = __webpack_require__(3);
+	var _signal = __webpack_require__(4);
 	
 	var _signal2 = _interopRequireDefault(_signal);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
-	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
-	
-	var Channel = (function () {
-	  function Channel(sourceId) {
+	var Channel = function () {
+	  function Channel(sourceId, targetWindow) {
 	    var _this = this;
 	
 	    _classCallCheck(this, Channel);
 	
 	    this.sourceId = sourceId;
-	    this.messageID = 0;
-	    this.messageHandlers = {};
-	    this.responseHandlers = {};
+	    this.targetWindow = targetWindow;
+	    this._messageCount = 0;
+	    this._messageHandlers = {};
+	    this._responseHandlers = {};
 	
 	    window.addEventListener('message', function (event) {
 	      _this._handleMessage(event.data);
@@ -177,9 +192,9 @@
 	        params[_key - 1] = arguments[_key];
 	      }
 	
-	      var messageID = this._send(method, params);
+	      var messageId = this._send(method, params);
 	      return new _yaku2.default(function (resolve, reject) {
-	        _this2.responseHandlers[messageID] = { resolve: resolve, reject: reject };
+	        _this2._responseHandlers[messageId] = { resolve: resolve, reject: reject };
 	      });
 	    }
 	  }, {
@@ -194,70 +209,66 @@
 	  }, {
 	    key: 'addHandler',
 	    value: function addHandler(method, handler) {
-	      if (!(method in this.messageHandlers)) {
-	        this.messageHandlers[method] = new _signal2.default();
+	      if (!(method in this._messageHandlers)) {
+	        this._messageHandlers[method] = new _signal2.default();
 	      }
-	      return this.messageHandlers[method].attach(handler);
+	      return this._messageHandlers[method].attach(handler);
 	    }
 	  }, {
 	    key: '_handleMessage',
 	    value: function _handleMessage(message) {
 	      if (message.method) {
-	        // console.log('received message', message)
 	        var method = message.method;
-	        var params = message.params;
+	        var _params = message.params;
 	
-	        var handlers = this.messageHandlers[method];
+	        var handlers = this._messageHandlers[method];
 	        if (handlers) {
-	          handlers.dispatch.apply(handlers, _toConsumableArray(params));
+	          handlers.dispatch.apply(handlers, _toConsumableArray(_params));
 	        }
 	      } else {
 	        var id = message.id;
 	        var result = message.result;
 	        var error = message.error;
 	
-	        var handler = this.responseHandlers[id];
-	
-	        if (!handler) {
+	        var responseHandler = this._responseHandlers[id];
+	        if (!responseHandler) {
 	          return;
 	        }
-	
 	        if (result) {
-	          handler.resolve(result);
+	          responseHandler.resolve(result);
 	        } else if (error) {
-	          handler.reject(error);
+	          responseHandler.reject(error);
 	        }
-	
-	        delete this.responseHandlers[id];
+	        delete this._responseHandlers[id];
 	      }
 	    }
 	  }, {
 	    key: '_send',
 	    value: function _send(method, params) {
-	      var messageID = this.messageID++;
+	      var messageId = this._messageCount++;
 	
-	      window.parent.postMessage({
+	      this.targetWindow.postMessage({
 	        source: this.sourceId,
-	        id: messageID,
+	        id: messageId,
 	        method: method,
 	        params: params
 	      }, '*');
 	
-	      return messageID;
+	      return messageId;
 	    }
 	  }]);
 	
 	  return Channel;
-	})();
+	}();
 	
 	exports.default = Channel;
 
 /***/ },
-/* 2 */
+/* 3 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/*
-	 Yaku v0.11.4
+	 Yaku v0.11.7
 	 (c) 2015 Yad Smood. http://ysmood.org
 	 License MIT
 	*/
@@ -347,6 +358,8 @@
 	                settlePromise(self, $rejected, err.e);
 	        }
 	    };
+	
+	    Yaku.default = Yaku;
 	
 	    extendPrototype(Yaku, {
 	        /**
@@ -459,7 +472,7 @@
 	
 	        var p = newEmptyYaku(), item;
 	
-	        if (iterable instanceof Array) {
+	        if (isArray(iterable)) {
 	            len = iterable.length;
 	            while (i < len) {
 	                settleWithX(p, iterable[i++]);
@@ -523,7 +536,7 @@
 	            settlePromise(p1, $rejected, reason);
 	        }
 	
-	        if (iterable instanceof Array) {
+	        if (isArray(iterable)) {
 	            len = iterable.length;
 	            while (countDown < len) {
 	                runAll(countDown, iterable[countDown++], p1, res, onRejected);
@@ -656,6 +669,10 @@
 	
 	    function isFunction (obj) {
 	        return typeof obj === "function";
+	    }
+	
+	    function isArray (obj) {
+	        return obj && typeof obj.length === "number";
 	    }
 	
 	    /**
@@ -1062,12 +1079,12 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 3 */
+/* 4 */
 /***/ function(module, exports) {
 
-	"use strict";
+	'use strict';
 	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
@@ -1075,7 +1092,7 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
-	var Signal = (function () {
+	var Signal = function () {
 	  function Signal() {
 	    _classCallCheck(this, Signal);
 	
@@ -1084,7 +1101,7 @@
 	  }
 	
 	  _createClass(Signal, [{
-	    key: "dispatch",
+	    key: 'dispatch',
 	    value: function dispatch() {
 	      for (var key in this._listeners) {
 	        var _listeners;
@@ -1093,8 +1110,11 @@
 	      }
 	    }
 	  }, {
-	    key: "attach",
+	    key: 'attach',
 	    value: function attach(listener) {
+	      if (typeof listener !== 'function') {
+	        throw new Error('listener function expected');
+	      }
 	      var id = this._id++;
 	      this._listeners[id] = listener;
 	      var self = this;
@@ -1105,23 +1125,23 @@
 	  }]);
 	
 	  return Signal;
-	})();
+	}();
 	
 	exports.default = Signal;
 
 /***/ },
-/* 4 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
 	
-	var _signal = __webpack_require__(3);
+	var _signal = __webpack_require__(4);
 	
 	var _signal2 = _interopRequireDefault(_signal);
 	
@@ -1129,15 +1149,15 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
-	var FieldLocale = (function () {
+	var FieldLocale = function () {
 	  function FieldLocale(channel, _ref) {
 	    var _this = this;
-	
-	    _classCallCheck(this, FieldLocale);
 	
 	    var id = _ref.id;
 	    var locale = _ref.locale;
 	    var value = _ref.value;
+	
+	    _classCallCheck(this, FieldLocale);
 	
 	    this.id = id;
 	    this.locale = locale;
@@ -1173,12 +1193,12 @@
 	  }]);
 	
 	  return FieldLocale;
-	})();
+	}();
 	
 	exports.default = FieldLocale;
 
 /***/ },
-/* 5 */
+/* 6 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -1189,16 +1209,17 @@
 	exports.default = createWindow;
 	function createWindow(channel) {
 	  var autoUpdateHeight = function autoUpdateHeight() {
-	    return updateHeight();
+	    self.updateHeight();
 	  };
 	  var observer = new MutationObserver(autoUpdateHeight);
 	  var oldHeight = null;
 	  var isAutoResizing = false;
 	
-	  return { startAutoResizer: startAutoResizer, stopAutoResizer: stopAutoResizer, updateHeight: updateHeight };
+	  var self = { startAutoResizer: startAutoResizer, stopAutoResizer: stopAutoResizer, updateHeight: updateHeight };
+	  return self;
 	
 	  function startAutoResizer() {
-	    updateHeight();
+	    self.updateHeight();
 	    if (isAutoResizing) {
 	      return;
 	    }
@@ -1232,7 +1253,7 @@
 	}
 
 /***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1242,11 +1263,11 @@
 	});
 	exports.default = createEntry;
 	
-	var _signal = __webpack_require__(3);
+	var _signal = __webpack_require__(4);
 	
 	var _signal2 = _interopRequireDefault(_signal);
 	
-	var _field = __webpack_require__(7);
+	var _field = __webpack_require__(8);
 	
 	var _field2 = _interopRequireDefault(_field);
 	
@@ -1279,26 +1300,31 @@
 	}
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	exports.UnknownLocaleError = undefined;
 	
-	var _signal = __webpack_require__(3);
+	var _signal = __webpack_require__(4);
 	
 	var _signal2 = _interopRequireDefault(_signal);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
-	var Field = (function () {
+	var Field = function () {
 	  function Field(channel, info, defaultLocale) {
 	    var _this = this;
 	
@@ -1314,6 +1340,8 @@
 	    this.locales.forEach(function (locale) {
 	      _this._valueSignals[locale] = new _signal2.default();
 	    });
+	
+	    assertHasLocale(this, defaultLocale);
 	
 	    channel.addHandler('valueChanged', function (id, locale, value) {
 	      if (id !== _this.id) {
@@ -1338,13 +1366,14 @@
 	    key: 'setValue',
 	    value: function setValue(value, locale) {
 	      locale = locale || this._defaultLocale;
+	      assertHasLocale(this, locale);
 	      this._values[locale] = value;
 	      return this._channel.call('setValue', this.id, locale, value);
 	    }
 	  }, {
 	    key: 'removeValue',
 	    value: function removeValue(locale) {
-	      this.setValue(undefined, locale);
+	      return this.setValue(undefined, locale);
 	    }
 	  }, {
 	    key: 'onValueChanged',
@@ -1353,20 +1382,41 @@
 	        handler = locale;
 	        locale = this._defaultLocale;
 	      }
-	      if (!(locale in this._valueSignals)) {
-	        throw new Error('Unknown locale "' + locale + '" for field "' + this.id + '"');
-	      }
+	      assertHasLocale(this, locale);
 	      return this._valueSignals[locale].attach(handler);
 	    }
 	  }]);
 	
 	  return Field;
-	})();
+	}();
 	
 	exports.default = Field;
+	
+	function assertHasLocale(instance, locale) {
+	  if (!instance._valueSignals[locale]) {
+	    throw new UnknownLocaleError(instance.id, locale);
+	  }
+	}
+	
+	var UnknownLocaleError = exports.UnknownLocaleError = function (_Error) {
+	  _inherits(UnknownLocaleError, _Error);
+	
+	  function UnknownLocaleError(fieldId, locale) {
+	    _classCallCheck(this, UnknownLocaleError);
+	
+	    var _this2 = _possibleConstructorReturn(this, Object.getPrototypeOf(UnknownLocaleError).call(this));
+	
+	    _this2.message = 'Unknown locale "' + locale + '" for field "' + fieldId + '"';
+	    _this2.fieldId = fieldId;
+	    _this2.locale = locale;
+	    return _this2;
+	  }
+	
+	  return UnknownLocaleError;
+	}(Error);
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports) {
 
 	'use strict';
