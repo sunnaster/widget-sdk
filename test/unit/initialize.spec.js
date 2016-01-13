@@ -1,9 +1,9 @@
-import setup from '../../lib/api/setup'
+import initializeApi from '../../lib/api/initialize'
 
-describe(`setup(apiCreator)`, () => {
+describe(`initializeApi(apiCreator)`, () => {
   let cfWidget
   beforeEach(() => {
-    cfWidget = setup(function () { return {} })
+    cfWidget = initializeApi(function () { return {} })
   })
 
   describe(`returned "Contentful widget" object`, () => {
@@ -37,7 +37,7 @@ describe(`setup(apiCreator)`, () => {
           cfWidget.init(() => done())
           signalWidgetReady()
         })
-        it(`does not get called again if ready state is signaled again `, (done) => {
+        it(`does not get called again if ready state is signaled again`, (done) => {
           cfWidget.init(() => {
             const spy = sinon.spy()
             cfWidget.init(spy)
@@ -53,7 +53,9 @@ describe(`setup(apiCreator)`, () => {
   function signalWidgetReady () {
     window.postMessage({
       method: 'connect',
-      params: []
+      params: [{
+        id: 'foo'
+      }]
     }, '*')
   }
 })
