@@ -13,17 +13,12 @@ describe(`Channel instance`, () => {
     stubTargetWindow = {
       postMessage: postMessageSpy
     }
-    channel = new Channel(sourceId, stubTargetWindow)
+    channel = new Channel(stubTargetWindow)
+    channel.sourceId = sourceId
   })
 
   it(`is a Channel instance`, () => {
     expect(channel).to.be.instanceof(Channel)
-  })
-
-  describe(`.sourceId`, () => {
-    it(`is equal to id given to constructor`, () => {
-      expect(channel.sourceId).to.equal(sourceId)
-    })
   })
 
   describe(`.targetWindow`, () => {

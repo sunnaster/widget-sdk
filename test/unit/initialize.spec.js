@@ -1,9 +1,16 @@
-import initializeApi from '../../lib/api/initialize'
+import initializeApi, {
+  __RewireAPI__ as initializeApiRewireApi
+} from '../../lib/api/initialize'
+
+const createdApi = {}
+initializeApiRewireApi.__Rewire__('createApi', () => {
+  return createdApi
+})
 
 describe(`initializeApi(apiCreator)`, () => {
   let cfWidget
   beforeEach(() => {
-    cfWidget = initializeApi(function () { return {} })
+    cfWidget = initializeApi()
   })
 
   describe(`returned "Contentful widget" object`, () => {
@@ -38,10 +45,18 @@ describe(`initializeApi(apiCreator)`, () => {
           signalWidgetReady()
         })
         it(`does not get called again if ready state is signaled again`, (done) => {
-          cfWidget.init(() => {
-            const spy = sinon.spy()
-            cfWidget.init(spy)
+          const spy = sinon.spy()
+          cfWidget.init(spy)
+          signalWidgetReady()
+          signalWidgetReady()
+          setTimeout(() => {
             expect(spy).to.have.callCount(1)
+            done()
+          }, 0)
+        })
+        it(`provides the api created by the 'createApi' dependency`, (done) => {
+          cfWidget.init((api) => {
+            expect(api).to.equal(createdApi)
             done()
           })
           signalWidgetReady()
